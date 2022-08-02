@@ -2,32 +2,38 @@ use std::{
     error::Error,
     fs::{File, OpenOptions},
     io::Write,
+    ops::Div,
 };
 
 use crate::{vec3::*, Config};
 
-pub struct Output {
+pub struct Output<'a> {
     file: File,
+    config: &'a Config,
 }
 
-impl Output {
-    pub fn new(path: &String) -> Result<Output, Box<dyn Error>> {
-        let file = OpenOptions::new().write(true).create(true).open(path)?;
+impl<'a> Output<'a> {
+    pub fn new(config: &'a Config) -> Result<Output<'a>, Box<dyn Error>> {
+        let file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(&config.filename)?;
 
-        Ok(Output { file })
+        Ok(Output { file, config })
     }
 
-    pub fn initial(&mut self, config: &Config) -> Result<(), Box<dyn Error>> {
+    pub fn initial(&mut self) -> Result<(), Box<dyn Error>> {
         self.file.write_fmt(format_args!(
             "P3\n{} {}\n255\n",
-            config.image_width, config.image_height,
+            self.config.image_width, self.config.image_height,
         ))?;
 
         Ok(())
     }
 
     pub fn output_color(&mut self, pixel_color: &Color) -> Result<(), Box<dyn Error>> {
-        let (r, g, b) = output_color_as_u8(pixel_color);
+        let (r, g, b) =
+            output_color_as_u8(&(pixel_color.div(self.config.samples_per_pixel as f64)));
 
         self.file.write_fmt(format_args!("{r} {g} {b}\n"))?;
 

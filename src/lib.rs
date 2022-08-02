@@ -17,6 +17,7 @@ pub struct Config {
     pub image_width: i32,
     pub image_height: i32,
     pub aspect_ratio: f64,
+    pub samples_per_pixel: i32,
 
     pub viewport_width: f64,
     pub viewport_height: f64,
@@ -37,6 +38,7 @@ impl Default for Config {
             image_width: 400,
             image_height: Default::default(),
             aspect_ratio: 16.0 / 9.0,
+            samples_per_pixel: 100,
             viewport_width: Default::default(),
             viewport_height: 2.0,
             focal_length: 1.0,
@@ -79,9 +81,11 @@ fn initial_scene() -> Scene {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let mut out_stream = Output::new(&config.filename)?;
+    let mut out_stream = Output::new(&config)?;
 
-    out_stream.initial(&config)?;
+    out_stream.initial()?;
+
+    let mut rng = rand::thread_rng();
 
     for j in (0..=config.image_height - 1).rev() {
         print!("\x1b[2J");
@@ -89,15 +93,17 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         print!("\rScanlines remaining: {j}");
 
         for i in 0..config.image_width {
-            let (u, v) = (
-                (i as f64) / (config.image_width - 1) as f64,
-                (j as f64) / (config.image_height - 1) as f64,
-            );
+            let mut pixel_color = Color::new_color(0.0, 0.0, 0.0);
+            for _ in 0..config.samples_per_pixel {
+                let (u, v) = (
+                    (i as f64 + rng.gen::<f64>()) / (config.image_width - 1) as f64,
+                    (j as f64 + rng.gen::<f64>()) / (config.image_height - 1) as f64,
+                );
 
-            let ray = Ray::new(config.origin, config.ray_dierction_from_uv(u, v));
+                let ray = Ray::new(config.origin, config.ray_dierction_from_uv(u, v));
 
-            let pixel_color = ray_color(&ray, &config.scene);
-
+                pixel_color += ray_color(&ray, &config.scene);
+            }
             out_stream.output_color(&pixel_color)?;
         }
     }
