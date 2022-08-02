@@ -1,14 +1,17 @@
-mod color;
+mod geometry;
+mod output;
 mod ray;
 mod vec3;
 
-pub use crate::color::*;
+pub use crate::geometry::*;
+pub use crate::output::*;
 pub use crate::ray::*;
 pub use crate::vec3::*;
 
-use std::{error::Error, fs::OpenOptions, io::Write};
+use rand::prelude::*;
 
-#[derive(Debug)]
+use std::error::Error;
+
 pub struct Config {
     pub filename: String,
     pub image_width: i32,
@@ -23,6 +26,8 @@ pub struct Config {
     pub horizontal: Vec3,
     pub vertical: Vec3,
     pub lower_left_corner: Vec3,
+
+    pub scene: Scene,
 }
 
 impl Default for Config {
@@ -39,6 +44,7 @@ impl Default for Config {
             horizontal: Default::default(),
             vertical: Default::default(),
             lower_left_corner: Default::default(),
+            scene: Default::default(),
         }
     }
 }
@@ -54,26 +60,28 @@ impl Config {
             - config.horizontal / 2.0
             - config.vertical / 2.0
             - Vec3(0.0, 0.0, config.focal_length);
+        config.scene = initial_scene();
         config
+    }
+
+    fn ray_dierction_from_uv(&self, u: f64, v: f64) -> Vec3 {
+        self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin
     }
 }
 
-fn ray_color(ray: &Ray) -> Color {
-    let unit_direction = ray.direction().unit_vector();
-    let t = 0.5 * (unit_direction.y() + 1.0);
-    return Color::new_color(1.0, 1.0, 1.0) * (1.0 - t) + Color::new_color(0.5, 0.7, 1.0) * t;
+fn initial_scene() -> Scene {
+    let mut scene = Scene::new();
+
+    scene.add_object(Sphere::new(Point3::new_point3(0.0, 0.0, -1.0), 0.5));
+    scene.add_object(Sphere::new(Point3::new_point3(0.0, -100.5, -1.0), 100.0));
+
+    scene
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let mut file = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .open(config.filename)?;
+    let mut out_stream = Output::new(&config.filename)?;
 
-    file.write_fmt(format_args!(
-        "P3\n{} {}\n255\n",
-        config.image_width, config.image_height,
-    ))?;
+    out_stream.initial(&config)?;
 
     for j in (0..=config.image_height - 1).rev() {
         print!("\x1b[2J");
@@ -81,23 +89,16 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         print!("\rScanlines remaining: {j}");
 
         for i in 0..config.image_width {
-
             let (u, v) = (
                 (i as f64) / (config.image_width - 1) as f64,
                 (j as f64) / (config.image_height - 1) as f64,
             );
 
-            let r = Ray::new(
-                config.origin,
-                config.lower_left_corner + config.horizontal * u + config.vertical * v
-                    - config.origin,
-            );
+            let ray = Ray::new(config.origin, config.ray_dierction_from_uv(u, v));
 
-            let pixel_color = ray_color(&r);
-            
-            let (r, g, b) = output_color_as_u8(&pixel_color);
+            let pixel_color = ray_color(&ray, &config.scene);
 
-            file.write_fmt(format_args!("{r} {g} {b}\n"))?;
+            out_stream.output_color(&pixel_color)?;
         }
     }
 
