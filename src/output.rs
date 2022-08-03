@@ -1,10 +1,10 @@
+use crate::*;
+
 use std::{
     error::Error,
     fs::{File, OpenOptions},
     io::Write,
 };
-
-use crate::{vec3::*, Config};
 
 pub struct Output<'a> {
     file: File,

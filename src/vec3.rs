@@ -72,6 +72,22 @@ impl Vec3 {
     pub fn normalize(&mut self) {
         *self /= self.length();
     }
+
+    pub fn near_zero(&self) -> bool {
+        self.0.abs() < 1e-8f64 && self.1.abs() < 1e-8f64 && self.2.abs() < 1e-8f64
+    }
+
+    pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+        v - n * Vec3::dot(v, n) * 2.0
+    }
+
+    pub fn set_face_normal(ray_in_dir: Vec3, outward_normal: Vec3) -> Vec3 {
+        let is_front_face = Vec3::dot(ray_in_dir, outward_normal) < 0.0;
+        match is_front_face {
+            true => outward_normal,
+            false => outward_normal * -1.0,
+        }
+    }
 }
 
 impl Add for Vec3 {

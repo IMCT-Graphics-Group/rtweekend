@@ -125,6 +125,14 @@ fn vec3_normalize_work() {
 }
 
 #[test]
+fn vec3_reflect_work() {
+    let v = Vec3(1.0, -1.0, 0.0);
+    let n = Vec3(0.0, 1.0, 0.0);
+    let result = Vec3::reflect(v, n);
+    assert_eq!(result, Vec3(1.0, 1.0, 0.0));
+}
+
+#[test]
 fn ray_at_work() {
     let lhs = Ray::new(
         Vec3(1.0f64, 2.0f64, 3.0f64),

@@ -1,6 +1,6 @@
-use rand::prelude::*;
+use crate::*;
 
-use crate::Vec3;
+use rand::prelude::*;
 
 pub fn random_01() -> f64 {
     rand::thread_rng().gen::<f64>()
