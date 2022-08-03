@@ -31,8 +31,8 @@ impl Hittable for Sphere {
         if discriminant < 0.0 {
             return Option::None;
         }
-        let sqrtd = f64::sqrt(discriminant);
 
+        let sqrtd = f64::sqrt(discriminant);
         let root = (-half_b - sqrtd) / a;
         if root < t_range.0 || t_range.1 < root {
             let root = (-half_b + sqrtd) / a;
@@ -60,21 +60,16 @@ impl Scene {
     }
 
     pub fn hit(&self, ray: &Ray, t_range: (f64, f64)) -> Option<HitRecord> {
-        let mut is_hit = false;
+        let mut result = Option::None;
         let mut closest_so_far = t_range.1;
-        let mut hit_record = HitRecord::default();
 
         for object in self.objects.iter() {
             if let Some(record) = object.hit(ray, (t_range.0, closest_so_far)) {
-                is_hit = true;
                 closest_so_far = record.t;
-                hit_record = record;
+                result = Some(record);
             }
         }
 
-        match is_hit {
-            false => Option::None,
-            true => Option::Some(hit_record),
-        }
+        result
     }
 }

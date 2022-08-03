@@ -1,14 +1,14 @@
 mod geometry;
 mod output;
 mod ray;
+mod utils;
 mod vec3;
 
 pub use crate::geometry::*;
 pub use crate::output::*;
 pub use crate::ray::*;
+pub use crate::utils::*;
 pub use crate::vec3::*;
-
-use rand::prelude::*;
 
 use std::error::Error;
 
@@ -18,6 +18,7 @@ pub struct Config {
     pub image_height: i32,
     pub aspect_ratio: f64,
     pub samples_per_pixel: i32,
+    pub ray_depth: i32,
 
     pub viewport_width: f64,
     pub viewport_height: f64,
@@ -39,6 +40,7 @@ impl Default for Config {
             image_height: Default::default(),
             aspect_ratio: 16.0 / 9.0,
             samples_per_pixel: 100,
+            ray_depth: 50,
             viewport_width: Default::default(),
             viewport_height: 2.0,
             focal_length: 1.0,
@@ -85,8 +87,6 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     out_stream.initial()?;
 
-    let mut rng = rand::thread_rng();
-
     for j in (0..=config.image_height - 1).rev() {
         print!("\x1b[2J");
         print!("\x1b[H");
@@ -96,15 +96,19 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
             let mut pixel_color = Color::new_color(0.0, 0.0, 0.0);
             for _ in 0..config.samples_per_pixel {
                 let (u, v) = (
-                    (i as f64 + rng.gen::<f64>()) / (config.image_width - 1) as f64,
-                    (j as f64 + rng.gen::<f64>()) / (config.image_height - 1) as f64,
+                    (i as f64 + random_01()) / (config.image_width - 1) as f64,
+                    (j as f64 + random_01()) / (config.image_height - 1) as f64,
                 );
 
-                let ray = Ray::new(config.origin, config.ray_dierction_from_uv(u, v));
+                let ray = Ray::new(
+                    config.origin,
+                    config.ray_dierction_from_uv(u, v),
+                    config.ray_depth,
+                );
 
-                pixel_color += ray_color(&ray, &config.scene);
+                pixel_color += ray_color(&ray, &config);
             }
-            out_stream.output_color(&pixel_color)?;
+            out_stream.output_color(pixel_color)?;
         }
     }
 

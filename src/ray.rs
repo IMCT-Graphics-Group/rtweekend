@@ -1,9 +1,10 @@
-use crate::{vec3::*, Scene};
+use crate::{utils::*, vec3::*, Config};
 
 #[derive(Debug, Default)]
 pub struct Ray {
     orig: Point3,
     dir: Vec3,
+    depth: i32,
 }
 
 #[derive(Debug, Default, Clone)]
@@ -19,8 +20,8 @@ pub trait Hittable {
 }
 
 impl Ray {
-    pub fn new(orig: Point3, dir: Vec3) -> Ray {
-        Ray { orig, dir }
+    pub fn new(orig: Point3, dir: Vec3, depth: i32) -> Ray {
+        Ray { orig, dir, depth }
     }
 
     pub fn origin(&self) -> Point3 {
@@ -59,9 +60,20 @@ pub fn hit_sphere(center: Point3, radius: f64, ray: &Ray) -> f64 {
     }
 }
 
-pub fn ray_color(ray: &Ray, scene: &Scene) -> Color {
-    if let Some(hit_record) = scene.hit(ray, (0.0, f64::INFINITY)) {
-        return (hit_record.hit_normal + Color::new_color(1.0, 1.0, 1.0)) * 0.5;
+pub fn ray_color(ray: &Ray, config: &Config) -> Color {
+    if ray.depth <= 0 {
+        return Color::new_color(0.0, 0.0, 0.0);
+    }
+
+    if let Some(hit_record) = config.scene.hit(ray, (f64::MIN_POSITIVE, f64::INFINITY)) {
+        return ray_color(
+            &Ray::new(
+                hit_record.hit_point,
+                random_hemisphere(hit_record.hit_normal),
+                ray.depth - 1,
+            ),
+            config,
+        ) * 0.5;
     }
 
     let unit_direction = ray.direction().unit_vector();
