@@ -84,14 +84,14 @@ fn vec3_cross_work() {
 
 #[test]
 fn vec3_length_work() {
-    let rhs = Vec3(3.0f64, 4.0f64, 5.0f64);
+    let rhs = Vec3(3.0f64, -4.0f64, 5.0f64);
     let result = rhs.length();
     assert_eq!(result, 7.0710678118654752440084436210485f64);
 }
 
 #[test]
 fn vec3_length_squared_work() {
-    let rhs = Vec3(3.0f64, 4.0f64, 5.0f64);
+    let rhs = Vec3(-3.0f64, 4.0f64, 5.0f64);
     let result = rhs.length_squared();
     assert_eq!(result, 50.0f64);
 }
@@ -125,8 +125,45 @@ fn vec3_normalize_work() {
 }
 
 #[test]
+fn vec3_reflect_work() {
+    let v = Vec3(1.0, -1.0, 0.0);
+    let n = Vec3(0.0, 1.0, 0.0);
+    let result = Vec3::reflect(v, n);
+    assert_eq!(result, Vec3(1.0, 1.0, 0.0));
+}
+
+#[test]
+fn vec3_refract_work() {
+    let v = Vec3(1.0, -1.0, 0.0);
+    let uv = v.unit_vector();
+    let n = Vec3(0.0, 1.0, 0.0);
+    let result = Vec3::refract(uv, n, 1.0 / 1.5);
+    assert_eq!(result, Vec3(0.4714045207910316, -0.881917103688197, 0.0,));
+}
+
+#[test]
 fn ray_at_work() {
-    let lhs = Ray::new(Vec3(1.0f64, 2.0f64, 3.0f64), Vec3(3.0f64, 4.0f64, 5.0f64));
+    let lhs = Ray::new(
+        Vec3(1.0f64, 2.0f64, 3.0f64),
+        Vec3(3.0f64, 4.0f64, 5.0f64),
+        10,
+    );
     let result = lhs.at(2.0f64);
     assert_eq!(result, Vec3(7.0f64, 10.0f64, 13.0f64));
+}
+
+#[test]
+fn random_range_work() {
+    for _ in 0..10 {
+        let result = random_range(-1.0, 1.0);
+        assert!(result > -1.0 && result < 1.0)
+    }
+}
+
+#[test]
+fn random_unit_sphere_work() {
+    for _ in 0..10 {
+        let result = random_unit_sphere();
+        assert!(result.length_squared() < 1.0)
+    }
 }
