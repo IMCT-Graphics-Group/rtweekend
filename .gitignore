@@ -2,3 +2,5 @@
 /.vscode
 *.png
 *.ppm
+
+Cargo.lock
