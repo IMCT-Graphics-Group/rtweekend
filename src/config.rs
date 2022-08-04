@@ -1,7 +1,7 @@
 use crate::*;
 
 pub struct Config {
-    pub filename: String,
+    pub file_path: String,
     pub image_width: i32,
     pub image_height: i32,
     pub aspect_ratio: f64,
@@ -23,7 +23,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            filename: String::from("image.ppm"),
+            file_path: String::from("image.png"),
             image_width: 400,
             image_height: Default::default(),
             aspect_ratio: 16.0 / 9.0,

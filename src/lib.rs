@@ -1,8 +1,8 @@
 mod config;
 mod geometry;
 mod hittable;
+mod imagestream;
 mod material;
-mod output;
 mod ray;
 mod scene;
 mod utils;
@@ -13,10 +13,10 @@ use material::dielectric::Dielectric;
 pub use crate::config::*;
 pub use crate::geometry::sphere::*;
 pub use crate::hittable::*;
+pub use crate::imagestream::*;
 pub use crate::material::lambertian::*;
 pub use crate::material::metal::*;
 pub use crate::material::*;
-pub use crate::output::*;
 pub use crate::ray::*;
 pub use crate::scene::*;
 pub use crate::utils::*;
@@ -75,9 +75,7 @@ fn initial_scene() -> Scene {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    //let mut out_stream = Output::new(&config)?;
-    let mut out_stream : ImageStream = ImageStream::new(&config);
-    //out_stream.initial()?;
+    let mut image_stream = ImageStream::new(&config);
 
     for j in (0..=config.image_height - 1).rev() {
         print!("\x1b[2J");
@@ -100,12 +98,11 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
                 pixel_color += ray_color(ray, &config);
             }
-            //out_stream.output_color(pixel_color)?;
-            out_stream.output_color(pixel_color);
+            image_stream.write_color(pixel_color / config.samples_per_pixel as f64);
         }
     }
 
-    out_stream.save_png("image");
+    image_stream.save_png();
     println!("\nDone.");
 
     Ok(())
