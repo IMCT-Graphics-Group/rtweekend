@@ -75,9 +75,9 @@ fn initial_scene() -> Scene {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let mut out_stream = Output::new(&config)?;
-
-    out_stream.initial()?;
+    //let mut out_stream = Output::new(&config)?;
+    let mut out_stream : ImageStream = ImageStream::new(&config);
+    //out_stream.initial()?;
 
     for j in (0..=config.image_height - 1).rev() {
         print!("\x1b[2J");
@@ -100,10 +100,12 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
                 pixel_color += ray_color(ray, &config);
             }
-            out_stream.output_color(pixel_color)?;
+            //out_stream.output_color(pixel_color)?;
+            out_stream.output_color(pixel_color);
         }
     }
 
+    out_stream.save_png("image");
     println!("\nDone.");
 
     Ok(())

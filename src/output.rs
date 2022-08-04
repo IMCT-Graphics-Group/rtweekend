@@ -1,24 +1,14 @@
-<<<<<<< HEAD
-use core::panic;
-=======
 use crate::*;
 
->>>>>>> d00c37f8361b0b48fce18588cbe38c0babe673d7
 use std::{
     error::Error,
     fs::{File, OpenOptions},
     io::Write,
-<<<<<<< HEAD
-    ops::Div, fmt::write,
 };
 
 use crate::{vec3::*, Config};
 use stb_image_write_rust::ImageWriter::ImageWriter;
 
-=======
-};
-
->>>>>>> d00c37f8361b0b48fce18588cbe38c0babe673d7
 pub struct Output<'a> {
     file: File,
     config: &'a Config,
@@ -78,6 +68,13 @@ pub struct ImageStream {
     spp    : i32
 }
 
+
+///usage :
+///let mut image = ImageStream::new(&config);
+///...
+///  //do some write stuff
+///...
+///image.save(path);
 impl ImageStream {
     pub fn new(config : &Config)->ImageStream{
         ImageStream 
@@ -89,11 +86,12 @@ impl ImageStream {
         }
     }
 
-    pub fn output_color(&mut self,color : &Color){
+    pub fn output_color(&mut self,color : Color){
         if self.data.len()  >= (self.width * self.height * 3) as usize {
             panic!("ImageStream::output_color : image out of bondary");
         }
-        let (r,g,b) = output_color_as_u8(&color.div(self.spp as f64));
+        let color = color / self.spp as f64;
+        let (r,g,b) = output_color_as_u8(color);
         self.data.push(r);
         self.data.push(g);
         self.data.push(b);
