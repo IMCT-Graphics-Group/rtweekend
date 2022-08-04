@@ -29,9 +29,9 @@ impl Hittable for Sphere {
         }
 
         let sqrtd = f64::sqrt(discriminant);
-        let root = (-half_b - sqrtd) / a;
+        let mut root = (-half_b - sqrtd) / a;
         if root < t_range.0 || t_range.1 < root {
-            let root = (-half_b + sqrtd) / a;
+            root = (-half_b + sqrtd) / a;
             if root < t_range.0 || t_range.1 < root {
                 return Option::None;
             }
@@ -39,12 +39,14 @@ impl Hittable for Sphere {
 
         let hit_point = ray.at(root);
         let outward_normal = (hit_point - self.center) / self.radius;
+        let (front_face, hit_normal) = Vec3::set_face_normal(ray.dir, outward_normal);
 
         return Option::Some(HitRecord::new(
             ray.at(root),
-            Vec3::set_face_normal(ray.dir, outward_normal),
+            hit_normal,
             self.material.clone(),
             root,
+            front_face,
         ));
     }
 }

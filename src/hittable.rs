@@ -11,6 +11,7 @@ pub struct HitRecord {
     pub hit_normal: Vec3,
     pub hit_material: Rc<Box<dyn Material>>,
     pub t: f64,
+    pub front_face: bool,
 }
 
 impl HitRecord {
@@ -19,12 +20,14 @@ impl HitRecord {
         hit_normal: Vec3,
         hit_material: Rc<Box<dyn Material>>,
         t: f64,
+        front_face: bool,
     ) -> HitRecord {
         HitRecord {
             hit_point,
             hit_normal,
             hit_material,
             t,
+            front_face,
         }
     }
 }

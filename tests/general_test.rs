@@ -133,6 +133,15 @@ fn vec3_reflect_work() {
 }
 
 #[test]
+fn vec3_refract_work() {
+    let v = Vec3(1.0, -1.0, 0.0);
+    let uv = v.unit_vector();
+    let n = Vec3(0.0, 1.0, 0.0);
+    let result = Vec3::refract(uv, n, 1.0 / 1.5);
+    assert_eq!(result, Vec3(0.4714045207910316, -0.881917103688197, 0.0,));
+}
+
+#[test]
 fn ray_at_work() {
     let lhs = Ray::new(
         Vec3(1.0f64, 2.0f64, 3.0f64),

@@ -81,12 +81,22 @@ impl Vec3 {
         v - n * Vec3::dot(v, n) * 2.0
     }
 
-    pub fn set_face_normal(ray_in_dir: Vec3, outward_normal: Vec3) -> Vec3 {
+    pub fn refract(uv: Vec3, n: Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = f64::min(Vec3::dot(uv * -1.0, n), 1.0);
+        let r_out_perp = (uv + n * cos_theta) * etai_over_etat;
+        let r_out_parallel = n * (-1.0 * f64::sqrt((1.0 - r_out_perp.length_squared()).abs()));
+        r_out_perp + r_out_parallel
+    }
+
+    pub fn set_face_normal(ray_in_dir: Vec3, outward_normal: Vec3) -> (bool, Vec3) {
         let is_front_face = Vec3::dot(ray_in_dir, outward_normal) < 0.0;
-        match is_front_face {
-            true => outward_normal,
-            false => outward_normal * -1.0,
-        }
+        (
+            is_front_face,
+            match is_front_face {
+                true => outward_normal,
+                false => outward_normal * -1.0,
+            },
+        )
     }
 }
 

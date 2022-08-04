@@ -8,6 +8,8 @@ mod scene;
 mod utils;
 mod vec3;
 
+use material::dielectric::Dielectric;
+
 pub use crate::config::*;
 pub use crate::geometry::sphere::*;
 pub use crate::hittable::*;
@@ -29,27 +31,40 @@ fn initial_scene() -> Scene {
     let material_ground: Rc<Box<dyn Material>> =
         Rc::new(Box::new(Lambertian::new(Color::new_color(0.8, 0.8, 0.0))));
     let material_center: Rc<Box<dyn Material>> =
-        Rc::new(Box::new(Lambertian::new(Color::new_color(0.7, 0.3, 0.3))));
-    let material_left: Rc<Box<dyn Material>> =
-        Rc::new(Box::new(Metal::new(Color::new_color(0.8, 0.8, 0.8))));
+        Rc::new(Box::new(Lambertian::new(Color::new_color(0.1, 0.2, 0.5))));
+    let material_left: Rc<Box<dyn Material>> = Rc::new(Box::new(Dielectric::new(1.5)));
     let material_right: Rc<Box<dyn Material>> =
-        Rc::new(Box::new(Metal::new(Color::new_color(0.8, 0.6, 0.2))));
+        Rc::new(Box::new(Metal::new(Color::new_color(0.8, 0.6, 0.2), 0.0)));
 
+    //center_sphere
     scene.add_object(Sphere::new(
         Point3::new_point3(0.0, 0.0, -1.0),
         0.5,
         material_center.clone(),
     ));
+
+    //ground_sphere
     scene.add_object(Sphere::new(
         Point3::new_point3(0.0, -100.5, -1.0),
         100.0,
         material_ground.clone(),
     ));
+
+    //left_sphere
     scene.add_object(Sphere::new(
         Point3::new_point3(-1.0, 0.0, -1.0),
         0.5,
         material_left.clone(),
     ));
+
+    //left_inner_sphere
+    scene.add_object(Sphere::new(
+        Point3::new_point3(-1.0, 0.0, -1.0),
+        -0.4,
+        material_left.clone(),
+    ));
+
+    //right_sphere
     scene.add_object(Sphere::new(
         Point3::new_point3(1.0, 0.0, -1.0),
         0.5,
