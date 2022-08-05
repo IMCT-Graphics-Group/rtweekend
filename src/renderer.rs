@@ -13,7 +13,7 @@ pub struct Renderer {
     receiver: Receiver<(u32, u32, Rgb<u8>)>,
 }
 
-impl<'a> Renderer {
+impl Renderer {
     pub fn new(config: ConfigType) -> Renderer {
         let (transmitter, receiver) = channel();
         Renderer {
