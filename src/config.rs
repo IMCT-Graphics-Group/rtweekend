@@ -2,11 +2,11 @@ use crate::*;
 
 pub struct Config {
     pub file_path: String,
-    pub image_width: i32,
-    pub image_height: i32,
+    pub image_width: u32,
+    pub image_height: u32,
     pub aspect_ratio: f64,
-    pub samples_per_pixel: i32,
-    pub ray_depth: i32,
+    pub samples_per_pixel: u32,
+    pub ray_depth: u32,
 
     pub viewport_width: f64,
     pub viewport_height: f64,
@@ -44,7 +44,7 @@ impl Default for Config {
 impl Config {
     pub fn new() -> Config {
         let mut config = Config::default();
-        config.image_height = ((config.image_width as f64) / config.aspect_ratio) as i32;
+        config.image_height = ((config.image_width as f64) / config.aspect_ratio) as u32;
         config.viewport_width = config.aspect_ratio * config.viewport_height;
         config.horizontal = Vec3(config.viewport_width, 0.0, 0.0);
         config.vertical = Vec3(0.0, config.viewport_height, 0.0);

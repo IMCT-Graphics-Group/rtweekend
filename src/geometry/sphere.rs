@@ -3,11 +3,11 @@ use crate::*;
 pub struct Sphere {
     center: Point3,
     radius: f64,
-    material: Rc<Box<dyn Material>>,
+    material: MaterialType,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64, material: Rc<Box<dyn Material>>) -> Sphere {
+    pub fn new(center: Point3, radius: f64, material: MaterialType) -> Sphere {
         Sphere {
             center,
             radius,

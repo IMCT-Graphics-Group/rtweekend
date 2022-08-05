@@ -4,11 +4,11 @@ use crate::*;
 pub struct Ray {
     pub orig: Point3,
     pub dir: Vec3,
-    pub depth: i32,
+    pub depth: u32,
 }
 
 impl Ray {
-    pub fn new(orig: Point3, dir: Vec3, depth: i32) -> Ray {
+    pub fn new(orig: Point3, dir: Vec3, depth: u32) -> Ray {
         Ray { orig, dir, depth }
     }
 

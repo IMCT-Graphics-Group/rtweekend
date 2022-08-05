@@ -2,7 +2,7 @@ use crate::*;
 
 #[derive(Default)]
 pub struct Scene {
-    pub objects: Vec<Box<dyn Hittable>>,
+    pub objects: Vec<ObjectType>,
 }
 
 impl Scene {
@@ -10,8 +10,8 @@ impl Scene {
         Default::default()
     }
 
-    pub fn add_object<T: Hittable + 'static>(&mut self, object: T) {
-        self.objects.push(Box::new(object));
+    pub fn add_object(&mut self, object: ObjectType) {
+        self.objects.push(object);
     }
 
     pub fn hit(&self, ray: &Ray, t_range: (f64, f64)) -> Option<HitRecord> {
