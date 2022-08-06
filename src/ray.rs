@@ -22,7 +22,7 @@ pub fn ray_color(ray: Ray, config: &Config) -> Color {
         return Color::new_color(0.0, 0.0, 0.0);
     }
 
-    if let Some(hit_record) = config.scene.hit(&ray, (1e-8f64, f64::INFINITY)) {
+    if let Some(hit_record) = config.scene.hit(&ray, (1e-8, f64::INFINITY)) {
         if let Some((scattered, attenuation)) = hit_record.hit_material.scatter(ray, &hit_record) {
             return attenuation * ray_color(scattered, config);
         }

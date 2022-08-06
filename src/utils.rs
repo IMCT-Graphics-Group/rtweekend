@@ -2,6 +2,8 @@ use crate::*;
 
 use rand::prelude::*;
 
+pub const PI: f64 = 3.1415926535897932384626433832795;
+
 pub fn random_01() -> f64 {
     rand::thread_rng().gen::<f64>()
 }
@@ -17,6 +19,16 @@ pub fn random_unit_sphere() -> Vec3 {
             random_range(-1.0, 1.0),
             random_range(-1.0, 1.0),
         );
+
+        if sample.length_squared() < 1.0 {
+            return sample;
+        }
+    }
+}
+
+pub fn random_unit_disk() -> Vec3 {
+    loop {
+        let sample = Vec3(random_range(-1.0, 1.0), random_range(-1.0, 1.0), 0.0);
 
         if sample.length_squared() < 1.0 {
             return sample;
