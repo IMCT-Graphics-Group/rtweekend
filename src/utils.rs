@@ -2,8 +2,6 @@ use crate::*;
 
 use rand::prelude::*;
 
-pub const PI: f64 = 3.1415926535897932384626433832795;
-
 pub fn random_01() -> f64 {
     rand::thread_rng().gen::<f64>()
 }
@@ -39,8 +37,8 @@ pub fn random_unit_disk() -> Vec3 {
 pub fn random_hemisphere(normal: Vec3) -> Vec3 {
     let sample = random_unit_sphere();
     if Vec3::dot(sample, normal) > 0.0 {
-        return sample;
+        sample
     } else {
-        return sample * -1.0;
+        sample * -1.0
     }
 }

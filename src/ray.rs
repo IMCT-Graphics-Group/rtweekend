@@ -18,7 +18,7 @@ impl Ray {
 }
 
 pub fn ray_color(ray: Ray, config: &Config) -> Color {
-    if ray.depth <= 0 {
+    if ray.depth == 0 {
         return Color::new_color(0.0, 0.0, 0.0);
     }
 
@@ -26,9 +26,9 @@ pub fn ray_color(ray: Ray, config: &Config) -> Color {
         if let Some((scattered, attenuation)) = hit_record.hit_material.scatter(ray, &hit_record) {
             return attenuation * ray_color(scattered, config);
         }
-        return Color::new_color(0.0, 0.0, 0.0);
+        Color::new_color(0.0, 0.0, 0.0)
     } else {
         let t = 0.5 * (ray.dir.unit_vector().y() + 1.0);
-        return Color::new_color(1.0, 1.0, 1.0) * (1.0 - t) + Color::new_color(0.5, 0.7, 1.0) * t;
+        Color::new_color(1.0, 1.0, 1.0) * (1.0 - t) + Color::new_color(0.5, 0.7, 1.0) * t
     }
 }

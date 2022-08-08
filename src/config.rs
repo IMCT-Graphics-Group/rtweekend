@@ -12,8 +12,8 @@ pub struct Config {
     pub scene: Scene,
 }
 
-impl Config {
-    pub fn new() -> Self {
+impl Default for Config {
+    fn default() -> Self {
         //Camera Settings
         let look_from = Point3::new_point3(13.0, 2.0, 3.0);
         let look_at = Point3::new_point3(0.0, 0.0, 0.0);
@@ -27,11 +27,10 @@ impl Config {
         //Film Settings
         let image_width: u32 = 1200;
         let image_height = ((image_width as f64) / aspect_ratio) as u32;
-        let samples_per_pixel: u32 = 50;
+        let samples_per_pixel: u32 = 10;
 
         Self {
             file_path: String::from("image.png"),
-
             camera: Camera::new(
                 look_from,
                 look_at,
@@ -42,13 +41,17 @@ impl Config {
                 focus_distance,
                 ray_depth,
             ),
-
             image_width,
             image_height,
             samples_per_pixel,
-
             scene: test_scene(),
         }
+    }
+}
+
+impl Config {
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 

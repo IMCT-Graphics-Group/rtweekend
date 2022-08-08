@@ -41,12 +41,12 @@ impl Hittable for Sphere {
         let outward_normal = (hit_point - self.center) / self.radius;
         let (front_face, hit_normal) = Vec3::set_face_normal(ray.dir, outward_normal);
 
-        return Option::Some(HitRecord::new(
+        Option::Some(HitRecord::new(
             ray.at(root),
             hit_normal,
             self.material.clone(),
             root,
             front_face,
-        ));
+        ))
     }
 }

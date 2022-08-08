@@ -66,7 +66,7 @@ impl Vec3 {
     }
 
     pub fn unit_vector(&self) -> Self {
-        self.clone() / self.length()
+        *self / self.length()
     }
 
     pub fn normalize(&mut self) {
