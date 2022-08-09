@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::*;
 
 pub trait Hittable {
@@ -27,5 +29,15 @@ impl HitRecord {
             t,
             front_face,
         }
+    }
+}
+
+impl Display for HitRecord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Hit_point:{}\nHit_normal:{}\nt:{}\n",
+            self.hit_point, self.hit_normal, self.t
+        )
     }
 }

@@ -50,3 +50,12 @@ impl Hittable for Sphere {
         ))
     }
 }
+
+impl Bounded for Sphere {
+    fn bounding_box(&self) -> AABB {
+        AABB::new(
+            self.center - Vec3(self.radius, self.radius, self.radius),
+            self.center + Vec3(self.radius, self.radius, self.radius),
+        )
+    }
+}

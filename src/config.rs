@@ -22,12 +22,12 @@ impl Default for Config {
         let aspect_ratio = 3.0 / 2.0;
         let aperture = 0.1;
         let focus_distance = 10.0;
-        let ray_depth: u32 = 10;
+        let ray_depth: u32 = 50;
 
         //Film Settings
         let image_width: u32 = 1200;
         let image_height = ((image_width as f64) / aspect_ratio) as u32;
-        let samples_per_pixel: u32 = 10;
+        let samples_per_pixel: u32 = 500;
 
         Self {
             file_path: String::from("image.png"),
@@ -101,6 +101,7 @@ fn initial_scene() -> Scene {
         material_right.clone(),
     ))));
 
+    scene.build_bvh();
     scene
 }
 
@@ -192,5 +193,7 @@ fn test_scene() -> Scene {
         material_3.clone(),
     ))));
 
+
+    scene.build_bvh();
     scene
 }

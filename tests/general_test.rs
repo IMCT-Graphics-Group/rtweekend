@@ -167,3 +167,8 @@ fn random_unit_sphere_work() {
         assert!(result.length_squared() < 1.0)
     }
 }
+
+#[test]
+fn bvh_work() {
+    Config::new();
+}

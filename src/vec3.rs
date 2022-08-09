@@ -77,6 +77,22 @@ impl Vec3 {
         self.0.abs() < 1e-8f64 && self.1.abs() < 1e-8f64 && self.2.abs() < 1e-8f64
     }
 
+    pub fn get(&self, index: usize) -> f64 {
+        self.array()[index]
+    }
+
+    pub fn array(&self) -> [f64; 3] {
+        [self.0, self.1, self.2]
+    }
+
+    pub fn from_array(array: [f64; 3]) -> Vec3 {
+        Vec3(array[0], array[1], array[2])
+    }
+
+    pub fn from_vec(list: Vec<f64>) -> Vec3 {
+        Vec3(list[0], list[1], list[2])
+    }
+
     pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
         v - n * Vec3::dot(v, n) * 2.0
     }

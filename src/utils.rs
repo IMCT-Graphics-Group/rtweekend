@@ -10,6 +10,10 @@ pub fn random_range(t_min: f64, t_max: f64) -> f64 {
     rand::thread_rng().gen_range(t_min..=t_max)
 }
 
+pub fn random_int(t_min: i32, t_max: i32) -> i32 {
+    rand::thread_rng().gen_range(t_min..=t_max)
+}
+
 pub fn random_unit_sphere() -> Vec3 {
     loop {
         let sample = Vec3(

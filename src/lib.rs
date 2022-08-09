@@ -11,6 +11,8 @@ mod vec3;
 
 pub use crate::camera::*;
 pub use crate::config::*;
+pub use crate::geometry::aabb::*;
+pub use crate::geometry::bvh::*;
 pub use crate::geometry::sphere::*;
 pub use crate::hittable::*;
 pub use crate::material::dielectric::*;
@@ -28,7 +30,7 @@ use std::sync::Arc;
 
 pub type MaterialType = Arc<Box<dyn Material + Send + Sync>>;
 
-pub type ObjectType = Arc<Box<dyn Hittable + Send + Sync>>;
+pub type ObjectType = Arc<Box<dyn Bounded + Send + Sync>>;
 
 pub type ConfigType = Arc<Box<Config>>;
 
