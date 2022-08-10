@@ -25,19 +25,21 @@ impl AABB {
         self.max
     }
 
-    pub fn hit(&self, ray: &Ray, t_range: (f64, f64)) -> bool {
+    pub fn hit(&self, ray: &Ray, t_range: (f64, f64)) -> Option<(f64, f64)> {
+        let (mut t0, mut t1) = t_range;
         for i in 0..3 {
             let inv_dir = 1.0 / ray.dir.get(i);
-            let mut t0 = (self.min.get(i) - ray.orig.get(i)) * inv_dir;
-            let mut t1 = (self.max.get(i) - ray.orig.get(i)) * inv_dir;
+            let mut _t0 = (self.min.get(i) - ray.orig.get(i)) * inv_dir;
+            let mut _t1 = (self.max.get(i) - ray.orig.get(i)) * inv_dir;
             if inv_dir < 0.0 {
-                (t0, t1) = (t1, t0);
+                (_t0, _t1) = (_t1, _t0);
             }
-            if t_range.1.min(t1) <= t_range.0.max(t0) {
-                return false;
+            if t_range.1.min(_t1) <= t_range.0.max(_t0) {
+                return Option::None;
             }
+            (t0, t1) = (t0.max(_t0), t1.min(_t1));
         }
-        return true;
+        return Option::Some((t0, t1));
     }
 }
 

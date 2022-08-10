@@ -28,7 +28,7 @@ impl Hittable for Scene {
         self.bvh.hit(ray, t_range)
     }
 
-    //迭代查询
+    // 迭代查询
     // fn hit(&self, ray: &Ray, t_range: (f64, f64)) -> Option<HitRecord> {
     //     let mut result = Option::None;
     //     let mut closest_so_far = t_range.1;

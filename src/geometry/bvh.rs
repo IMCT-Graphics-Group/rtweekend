@@ -82,20 +82,18 @@ struct Node {
 
 impl Hittable for Node {
     fn hit(&self, ray: &Ray, t_range: (f64, f64)) -> Option<HitRecord> {
-        if !self.aabb.hit(ray, t_range) {
-            return Option::None;
-        }
+        let range = self.aabb.hit(ray, t_range)?;
 
-        let mut left_result = self.left.hit(ray, t_range);
+        let mut left_result = self.left.hit(ray, range);
         let right_result = self.right.hit(
             ray,
             match left_result {
                 Some(temp_result) => {
                     let t = temp_result.t;
                     left_result = Option::Some(temp_result);
-                    (t_range.0, t)
+                    (range.0, t)
                 }
-                None => t_range,
+                None => range,
             },
         );
 
