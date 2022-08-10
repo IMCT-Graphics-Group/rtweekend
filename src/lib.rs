@@ -38,9 +38,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let config = Arc::new(Box::new(config));
     let mut renderer = Renderer::new(config.clone());
 
+    println!("Running...");
     for j in (0..=config.image_height - 1).rev() {
-        print!("\r{j} scanlines remaining.");
-
         for i in 0..config.image_width {
             let mut pixel_color = Color::new_color(0.0, 0.0, 0.0);
             let sender = renderer.sender();
@@ -65,7 +64,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     }
 
     renderer.save_png();
-    println!("\nDone.");
+    println!("Done.");
 
     Ok(())
 }
