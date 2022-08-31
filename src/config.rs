@@ -193,7 +193,6 @@ fn test_scene() -> Scene {
         material_3.clone(),
     ))));
 
-
     scene.build_bvh();
     scene
 }
