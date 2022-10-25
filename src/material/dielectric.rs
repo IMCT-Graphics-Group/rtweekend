@@ -36,6 +36,38 @@ impl Material for Dielectric {
 
         Option::Some((scattered, attenuation))
     }
+
+    fn scatter_mc(&self, ray_in: &Ray, hit_record: &HitRecord) -> Option<ScatterRecord> {
+        let attenuation = Color::new_color(1.0, 1.0, 1.0);
+        let refraction_ratio = match hit_record.front_face {
+            true => 1.0 / self.ior,
+            false => self.ior,
+        };
+
+        let unit_direction = ray_in.dir.unit_vector();
+
+        let direction = if is_reflect(unit_direction, hit_record.hit_normal, refraction_ratio){
+            Vec3::reflect(unit_direction, hit_record.hit_normal)
+        } else{
+            Vec3::refract(
+                ray_in.dir.unit_vector(),
+                hit_record.hit_normal,
+                refraction_ratio,
+            )
+        };
+
+        let specular_ray = Ray::new(hit_record.hit_point, direction, ray_in.depth - 1);
+
+        let srec = ScatterRecord{
+            specular_ray,
+            is_specular: true,
+            attenuation,
+            pdf_ptr: Arc::new(Box::new(Cosine_pdf::new(&hit_record.hit_normal)))
+        };
+
+        Some(srec)
+
+    }
 }
 
 fn is_reflect(ray_in: Vec3, normal: Vec3, ior: f64) -> bool {

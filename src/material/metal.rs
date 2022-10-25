@@ -35,4 +35,20 @@ impl Material for Metal {
             false => Option::None,
         }
     }
+
+    fn scatter_mc(&self, ray_in: &Ray, hit_record: &HitRecord) -> Option<ScatterRecord> {
+        let reflected = Vec3::reflect(ray_in.dir.unit_vector(), hit_record.hit_normal);
+        let srec = ScatterRecord{
+            specular_ray: Ray::new(
+                hit_record.hit_point, 
+                reflected +  random_unit_sphere() * self.fuzz, 
+                ray_in.depth-1
+            ),
+            is_specular: true,
+            attenuation: self.albedo,
+            pdf_ptr: Arc::new(Box::new(Cosine_pdf::new(&hit_record.hit_normal)))
+        };
+
+        Some(srec)
+    }
 }

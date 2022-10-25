@@ -17,6 +17,21 @@ impl AABB {
         AABB { min, max }
     }
 
+    pub fn new_abitary(p0:&Point3,p1:&Point3) -> AABB{
+        let min = Point3::new_point3(
+            f64::min(p0.0, p1.0), 
+            f64::min(p0.1, p1.1), 
+            f64::min(p0.2, p1.2),
+        );
+        let max = Point3::new_point3(
+            f64::max(p0.0, p1.0), 
+            f64::max(p0.1, p1.1), 
+            f64::max(p0.2, p1.2),
+        );
+
+        AABB { min, max }
+    }
+
     pub fn min(&self) -> Point3 {
         self.min
     }
@@ -40,6 +55,21 @@ impl AABB {
             (t0, t1) = (t0.max(_t0), t1.min(_t1));
         }
         return Option::Some((t0, t1));
+    }
+
+    pub fn union_point3(b:&AABB, p:&Point3) -> AABB{
+        let min:Point3 = Point3::new_point3(
+            b.min().0.min(p.0),
+            b.min().1.min(p.1),
+            b.min().2.min(p.2),
+        );
+        let max:Point3 = Point3::new_point3(
+            b.max().0.max(p.0),
+            b.max().1.max(p.1),
+            b.max().2.max(p.2),
+        );
+
+        AABB { min, max}
     }
 }
 

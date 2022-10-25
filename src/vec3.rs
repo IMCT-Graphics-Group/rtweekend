@@ -1,3 +1,5 @@
+use crate::*;
+
 use std::{
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
@@ -7,6 +9,7 @@ use std::{
 pub struct Vec3(pub f64, pub f64, pub f64);
 pub type Point3 = Vec3;
 pub type Color = Vec3;
+pub type Normal3 = Vec3;
 
 impl Point3 {
     pub fn new_point3(x: f64, y: f64, z: f64) -> Vec3 {
@@ -57,7 +60,19 @@ impl Vec3 {
         lhs.0 * rhs.0 + lhs.1 * rhs.1 + lhs.2 * rhs.2
     }
 
+    pub fn dot_borrow(lhs: &Vec3, rhs: &Vec3) -> f64 {
+        lhs.0 * rhs.0 + lhs.1 * rhs.1 + lhs.2 * rhs.2
+    }
+
     pub fn cross(lhs: Vec3, rhs: Vec3) -> Self {
+        Vec3(
+            lhs.1 * rhs.2 - lhs.2 * rhs.1,
+            lhs.2 * rhs.0 - lhs.0 * rhs.2,
+            lhs.0 * rhs.1 - lhs.1 * rhs.0,
+        )
+    }
+
+    pub fn cross_borrow(lhs: &Vec3, rhs: &Vec3) -> Self{
         Vec3(
             lhs.1 * rhs.2 - lhs.2 * rhs.1,
             lhs.2 * rhs.0 - lhs.0 * rhs.2,
@@ -79,6 +94,12 @@ impl Vec3 {
 
     pub fn get(&self, index: usize) -> f64 {
         self.array()[index]
+    }
+
+    pub fn set(&mut self, index: usize, value: f64){
+        let mut array = self.array();
+        array[index] = value;
+        *self = Vec3(array[0],array[1],array[2]);
     }
 
     pub fn array(&self) -> [f64; 3] {
@@ -112,6 +133,36 @@ impl Vec3 {
                 true => outward_normal,
                 false => outward_normal * -1.0,
             },
+        )
+    }
+
+    pub fn abs(&self) -> Vec3{
+        Vec3(self.0.abs(), self.1.abs(), self.2.abs())
+    }
+
+    pub fn max_dimension(&self) -> usize{
+        if self.0 > self.1{
+            if self.0 > self.2{
+                0_usize
+            } else{
+                2_usize
+            }
+        } else if self.1 > self.2{
+            1_usize
+        } else{
+            2_usize
+        }
+    }
+
+    pub fn permute(&self, x: usize, y: usize, z: usize) -> Vec3 {
+        let v3: [Float; 3] = [self.0, self.1, self.2];
+        let xp: Float = v3[x];
+        let yp: Float = v3[y];
+        let zp: Float = v3[z];
+        Vec3 (
+            xp,
+            yp,
+            zp,
         )
     }
 }
@@ -203,5 +254,38 @@ impl DivAssign<f64> for Vec3 {
 impl Display for Vec3 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {}, {})", self.0, self.1, self.2)
+    }
+}
+
+#[derive(Default, Debug, Clone, Copy, PartialEq, PartialOrd)]
+pub struct Point2(pub f64, pub f64);
+
+impl Point2{
+    pub fn new(x:f64,y:f64) -> Self{
+        Point2(x, y)
+    }
+
+    pub fn x(&self) -> f64{
+        self.0
+    }
+
+    pub fn y(&self) -> f64{
+        self.1
+    }
+}
+
+impl Add for Point2 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0, self.1 + rhs.1)
+    }
+}
+
+impl Mul<f64> for Point2 {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self(self.0 * rhs, self.1 * rhs)
     }
 }

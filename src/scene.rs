@@ -17,6 +17,10 @@ impl Scene {
         self.objects.push(object);
     }
 
+    pub fn add_objects(&mut self, objects: & mut Vec<ObjectType>){
+        self.objects.append(objects);
+    }
+
     pub fn build_bvh(&mut self) {
         self.bvh = BVH::build(self.objects.clone());
     }

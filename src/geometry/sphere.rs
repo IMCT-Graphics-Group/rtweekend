@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use crate::*;
 
 pub struct Sphere {
@@ -13,6 +15,15 @@ impl Sphere {
             radius,
             material,
         }
+    }
+
+    fn get_sphere_uv(p:&Point3) -> (f64,f64){
+        let theta = (-p.y()).acos();
+        let phi = f64::atan2(-p.z(), p.x()) + PI;
+
+        let u = phi / (2.0 * PI);
+        let v = theta / PI;
+        (u,v)
     }
 }
 
@@ -40,12 +51,16 @@ impl Hittable for Sphere {
         let hit_point = ray.at(root);
         let outward_normal = (hit_point - self.center) / self.radius;
         let (front_face, hit_normal) = Vec3::set_face_normal(ray.dir, outward_normal);
+        let (u,v) = Sphere::get_sphere_uv(&outward_normal);
+       
 
         Option::Some(HitRecord::new(
             ray.at(root),
             hit_normal,
             self.material.clone(),
             root,
+            u,
+            v,
             front_face,
         ))
     }
